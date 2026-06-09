@@ -1,0 +1,30 @@
+name: Daily Digest
+
+# Compiles the morning digest and writes it to Neon. Runs off Vercel because
+# the compile (~2 min, web search) exceeds serverless function timeouts.
+
+on:
+  schedule:
+    - cron: "30 23 * * *" # 05:00 IST (23:30 UTC previous day)
+  workflow_dispatch: {} # allow manual runs from the Actions tab
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Compile digest
+        run: npx tsx scripts/run-compile.ts
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          # Optional overrides (defaults live in code):
+          DIGEST_MODEL: ${{ vars.DIGEST_MODEL }}
+          RESEARCH_MODEL: ${{ vars.RESEARCH_MODEL }}
+          TOP_RESEARCHED: ${{ vars.TOP_RESEARCHED }}
