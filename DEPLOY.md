@@ -85,6 +85,35 @@ Actions → Variables) to override the defaults — no code change needed:
 | `DIGEST_MODEL` | `claude-sonnet-4-6` | Model for clustering + explainers. |
 | `RESEARCH_MODEL` | `claude-haiku-4-5` | Model for the web-search research step. |
 
+## Rotating credentials (one command)
+
+Each secret lives in up to three places (GitHub Actions secret, Vercel production env,
+local `.env.local`). To rotate without doing it three times by hand:
+
+```bash
+npm run rotate-secrets
+```
+
+- Prompts for each secret (hidden input). **Leave blank to skip** one you're not changing.
+- Propagates each to all the places it belongs (`ANTHROPIC_API_KEY` → GitHub + local;
+  `DATABASE_URL` → GitHub + Vercel + local).
+- Offers to run `vercel --prod` afterward (required for Vercel env changes to take effect).
+
+Preview without changing anything:
+
+```bash
+DRY_RUN=1 npm run rotate-secrets
+```
+
+Non-interactive (e.g. piping from a password manager):
+
+```bash
+NEW_ANTHROPIC_API_KEY=sk-... NEW_DATABASE_URL=postgresql://... npm run rotate-secrets
+```
+
+Destinations per secret are defined in `scripts/rotate-secrets.mjs` (edit the `SECRETS` map
+to add more, e.g. `CRON_SECRET`).
+
 ## Notes
 
 - **Cost:** ~$0.31/run (~$9/month) at the current settings — see the Actions run log for the
