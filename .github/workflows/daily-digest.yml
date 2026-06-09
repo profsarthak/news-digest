@@ -2,6 +2,7 @@ name: Daily Digest
 
 # Compiles the morning digest and writes it to Neon. Runs off Vercel because
 # the compile (~2 min, web search) exceeds serverless function timeouts.
+# (Manual dispatch supported via the Actions tab or `gh workflow run`.)
 
 on:
   schedule:
