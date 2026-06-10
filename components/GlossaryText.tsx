@@ -13,7 +13,11 @@ function escapeRegExp(s: string): string {
 // Renders text with glossary terms highlighted as tappable GlossaryTerm
 // popovers. Each distinct term is highlighted on its first occurrence only,
 // to avoid a wall of underlines.
-export function GlossaryText({ text, glossary }: Props) {
+export function GlossaryText({ text: rawText, glossary }: Props) {
+  // Defensive: strip any stray HTML/citation tags (e.g. the web_search tool's
+  // <cite index="...">…</cite>) so they never render as literal text.
+  const text = rawText.replace(/<\/?[a-zA-Z][^>]*>/g, "").replace(/\s{2,}/g, " ");
+
   if (glossary.length === 0) return <>{text}</>;
 
   // Longest terms first so multi-word terms win over their substrings.

@@ -38,12 +38,26 @@ function parseResearch(text: string): Research | null {
     try {
       const obj = JSON.parse(text.slice(start, end + 1));
       const ok = ResearchSchema.safeParse(obj);
-      if (ok.success) return ok.data;
+      if (ok.success) {
+        return {
+          context: clean(ok.data.context),
+          implications: clean(ok.data.implications),
+        };
+      }
     } catch {
       /* fall through */
     }
   }
   return null;
+}
+
+// The web_search tool wraps cited claims in <cite index="...">...</cite> tags.
+// Strip those (and any stray HTML tags) so they don't render as literal text.
+function clean(s: string): string {
+  return s
+    .replace(/<\/?[a-zA-Z][^>]*>/g, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
 }
 
 /**

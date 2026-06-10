@@ -8,7 +8,8 @@ type Props = {
 
 // A single topic preview on the Today view. Tapping anywhere opens the detail.
 export function TopicCard({ topic, date }: Props) {
-  const outlets = topic.sources.map((s) => s.outlet);
+  // Distinct outlet names (a topic often has several articles from one outlet).
+  const outlets = [...new Set(topic.sources.map((s) => s.outlet))];
   return (
     <Link
       href={`/${date}/${topic.id}`}
