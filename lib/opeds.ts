@@ -6,7 +6,8 @@ import { extractArticle } from "./scrape";
 import { mapLimit, uniqueSlug } from "./util";
 import type { OpEd } from "./types";
 
-const OPED_COUNT = Number(process.env.OPED_COUNT) || 3;
+const OPED_COUNT = Number(process.env.OPED_COUNT) || 4;
+const INDIA_OUTLET = "Indian Express";
 
 // ---- Selection (Sonnet) --------------------------------------------------
 
@@ -14,13 +15,22 @@ const SelectSchema = z.object({
   picks: z
     .array(z.number().int())
     .describe("Indexes of the chosen op-eds, most significant first."),
+  india_pick: z
+    .number()
+    .int()
+    .describe(
+      "Index of the single best India-focused opinion column (ideally from Indian Express), so the digest always includes Indian coverage; -1 if none is suitable.",
+    ),
 });
 
 const SELECT_SYSTEM = `You curate op-eds for a personal morning digest. From the opinion-section
-headlines provided, choose the ${OPED_COUNT} most substantive and distinct argument/analysis pieces.
-Prefer genuine columns with a clear viewpoint. EXCLUDE archival reprints ("N years ago…"), straight
-news reports, listicles, obituaries, letters, and near-duplicates. Return their indexes, most
-significant first.`;
+headlines provided, choose the ${OPED_COUNT} most substantive and distinct argument/analysis pieces
+("picks"), most significant first. Prefer genuine columns with a clear viewpoint. EXCLUDE archival
+reprints ("N years ago…"), straight news reports, listicles, obituaries, letters, and near-duplicates.
+
+Separately set "india_pick" to the index of the single best India-focused opinion column (ideally
+from Indian Express) — the digest must always include Indian coverage. Use -1 only if nothing
+suitable exists.`;
 
 async function selectOpEds(items: FeedItem[]): Promise<FeedItem[]> {
   if (items.length === 0) return [];
@@ -41,17 +51,37 @@ async function selectOpEds(items: FeedItem[]): Promise<FeedItem[]> {
   });
   usage.add("oped-select", MODEL, res.usage);
 
-  const picks = res.parsed_output?.picks ?? [];
+  const out = res.parsed_output;
+  const valid = (i: number) => Number.isInteger(i) && i >= 0 && i < items.length;
+
+  // Merit picks, de-duped and capped.
   const seen = new Set<number>();
-  const chosen: FeedItem[] = [];
-  for (const i of picks) {
-    if (i >= 0 && i < items.length && !seen.has(i)) {
+  const chosen: number[] = [];
+  for (const i of out?.picks ?? []) {
+    if (valid(i) && !seen.has(i)) {
       seen.add(i);
-      chosen.push(items[i]);
+      chosen.push(i);
     }
     if (chosen.length >= OPED_COUNT) break;
   }
-  return chosen;
+
+  // Guarantee at least one Indian Express op-ed (deterministic, not just the
+  // prompt). Prefer the model's india_pick when it's Indian Express; otherwise
+  // fall back to the most recent Indian Express item.
+  const hasIndia = chosen.some((i) => items[i].outlet === INDIA_OUTLET);
+  if (!hasIndia) {
+    const ip = out?.india_pick ?? -1;
+    let inject =
+      valid(ip) && items[ip].outlet === INDIA_OUTLET
+        ? ip
+        : items.findIndex((it) => it.outlet === INDIA_OUTLET);
+    if (inject >= 0 && !seen.has(inject)) {
+      if (chosen.length >= OPED_COUNT) chosen[chosen.length - 1] = inject; // swap weakest
+      else chosen.push(inject);
+    }
+  }
+
+  return chosen.slice(0, OPED_COUNT).map((i) => items[i]);
 }
 
 // ---- Summarise one op-ed (Haiku) -----------------------------------------
