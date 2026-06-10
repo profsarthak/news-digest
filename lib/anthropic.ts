@@ -10,6 +10,8 @@ export const anthropic = new Anthropic({ maxRetries: 6 });
 // `||` (not `??`) so an empty-string env var from CI falls back to the default.
 export const MODEL = process.env.DIGEST_MODEL || "claude-sonnet-4-6";
 export const RESEARCH_MODEL = process.env.RESEARCH_MODEL || "claude-haiku-4-5";
+// Op-ed summaries run on the cheaper model (no web search).
+export const OPED_MODEL = process.env.OPED_MODEL || "claude-haiku-4-5";
 
 // ---- Usage instrumentation ----------------------------------------------
 // Accumulates token/search usage across a run so we can report exact cost.

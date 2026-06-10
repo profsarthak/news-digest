@@ -26,8 +26,25 @@ export type Topic = {
   researched: boolean;
 };
 
+export type OpEd = {
+  id: string;
+  title: string;
+  /** Best-effort byline; may be empty (e.g. paywalled headline-only feeds). */
+  author: string;
+  outlet: string;
+  /** Neutral summary of the argument. */
+  summary: string;
+  /** One-line core thesis / which way it leans. */
+  thesis: string;
+  glossary: GlossaryEntry[];
+  /** Read-it link to the original op-ed. */
+  url: string;
+};
+
 export type Digest = {
   /** ISO date, e.g. "2026-06-09" (IST). */
   date: string;
   topics: Topic[];
+  /** Curated op-eds for the day's Opinion tab. */
+  opeds: OpEd[];
 };

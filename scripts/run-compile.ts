@@ -88,6 +88,12 @@ async function main() {
       `  • ${t.researched ? "🔎" : "  "} ${t.title}  [ctx ${t.context.length} | impl ${t.implications.length} | gloss ${t.glossary.length} | src ${t.sources.length}]`,
     );
   }
+  console.log(`\n${digest.opeds.length} op-eds:`);
+  for (const o of digest.opeds) {
+    console.log(
+      `  • ${o.title} — ${o.author || "(no byline)"} · ${o.outlet}  [thesis ${o.thesis.length} | summary ${o.summary.length} | gloss ${o.glossary.length}]`,
+    );
+  }
   summarize(usage.calls);
 }
 

@@ -126,4 +126,36 @@ export const sampleDigest: Digest = {
       ],
     },
   ],
+  opeds: [
+    {
+      id: "the-case-for-a-monsoon-dividend",
+      title: "The case for banking the monsoon dividend",
+      author: "A. Columnist",
+      outlet: "Indian Express",
+      summary:
+        "The writer argues that a good monsoon should be treated as a one-off fiscal windfall — used to rebuild rural buffers and cut food-price volatility — rather than as licence for new recurring subsidies that are hard to unwind later.",
+      thesis:
+        "Leans fiscally cautious: spend the monsoon upside on resilience, not permanent giveaways.",
+      glossary: [
+        {
+          term: "fiscal windfall",
+          definition:
+            "An unexpected one-time boost to government revenue or savings, not guaranteed to repeat.",
+        },
+      ],
+      url: "https://indianexpress.com/",
+    },
+    {
+      id: "rate-cuts-are-not-a-panacea",
+      title: "Why rate cuts alone won't fix growth",
+      author: "B. Economist",
+      outlet: "Financial Times",
+      summary:
+        "An argument that markets are overstating how much an eventual RBI rate cut would help, given that the real constraints on investment are structural — land, logistics, and policy uncertainty — not the cost of credit.",
+      thesis:
+        "Sceptical of monetary optimism: structural reform matters more than the repo rate.",
+      glossary: [],
+      url: "https://www.ft.com/",
+    },
+  ],
 };

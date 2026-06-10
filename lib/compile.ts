@@ -5,6 +5,8 @@ import { fetchRecentItems, type FeedItem } from "./feeds";
 import { clusterItems, type ClusteredTopic } from "./cluster";
 import { research } from "./research";
 import { extractArticle } from "./scrape";
+import { compileOpEds } from "./opeds";
+import { mapLimit, slugify } from "./util";
 import type { Digest, Source, Topic } from "./types";
 
 const CoreSchema = z.object({
@@ -90,35 +92,6 @@ async function compileCore(
   return response.parsed_output ?? EMPTY_CORE;
 }
 
-// Run an async mapper over items with a fixed concurrency, preserving order.
-// Keeps the per-minute token rate under the account's limit during the burst.
-async function mapLimit<T, R>(
-  items: T[],
-  limit: number,
-  fn: (item: T, index: number) => Promise<R>,
-): Promise<R[]> {
-  const results: R[] = new Array(items.length);
-  let next = 0;
-  async function worker() {
-    while (next < items.length) {
-      const i = next++;
-      results[i] = await fn(items[i], i);
-    }
-  }
-  await Promise.all(
-    Array.from({ length: Math.min(limit, items.length) }, worker),
-  );
-  return results;
-}
-
-function slugify(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 60);
-}
-
 function sourcesOf(items: FeedItem[]): Source[] {
   const seen = new Set<string>();
   const out: Source[] = [];
@@ -190,9 +163,13 @@ export async function compileDigest(date: string): Promise<Digest> {
   // Limited concurrency (not all-at-once) to stay under the per-minute token
   // rate limit. Clusters are ordered most-important-first, so the first
   // TOP_RESEARCHED topics get the web-search upgrade.
-  const topics = await mapLimit(withIds, 2, ({ cluster, id }, index) =>
-    compileTopic(cluster, id, index < TOP_RESEARCHED),
-  );
+  // Op-eds compile alongside the news topics (independent pipeline).
+  const [topics, opeds] = await Promise.all([
+    mapLimit(withIds, 2, ({ cluster, id }, index) =>
+      compileTopic(cluster, id, index < TOP_RESEARCHED),
+    ),
+    compileOpEds(),
+  ]);
 
-  return { date, topics };
+  return { date, topics, opeds };
 }

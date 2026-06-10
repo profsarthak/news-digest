@@ -33,7 +33,18 @@ export type FeedItem = {
   publishedAt: Date | null;
   /** Whether the full article may be fetched (non-paywalled, direct URL). */
   scrapeable: boolean;
+  /** Best-effort byline from the feed (often empty). */
+  author?: string;
 };
+
+// Opinion/op-ed feeds. Only outlets with a clean, dedicated opinion section are
+// included — The Wire/Scroll/The Ken expose no reliable opinion feed (see
+// scripts/probe-opinion.ts). Indian Express op-eds are full-text scrapeable;
+// FT opinion is paywalled (headline-level).
+export const OPINION_FEEDS: Outlet[] = [
+  { name: "Indian Express", url: "https://indianexpress.com/section/opinion/feed/" },
+  { name: "Financial Times", url: "https://www.ft.com/rss/opinion", paywalled: true },
+];
 
 const parser = new Parser({
   timeout: 15000,
@@ -82,6 +93,9 @@ export async function fetchOutlet(outlet: Outlet): Promise<FeedItem[]> {
       // Google News snippets just echo the title — drop them so we don't
       // store noise; the headline carries the signal for those outlets.
       const blurb = isGoogleNews ? "" : stripHtml(blurbRaw).slice(0, 600);
+      const author =
+        (item.creator || (item as { author?: string }).author || "").trim() ||
+        undefined;
       return [
         {
           outlet: outlet.name,
@@ -90,6 +104,7 @@ export async function fetchOutlet(outlet: Outlet): Promise<FeedItem[]> {
           url,
           publishedAt: toDate(item),
           scrapeable,
+          author,
         },
       ];
     });
@@ -115,6 +130,26 @@ export async function fetchRecentItems(
       .filter((it) => it.publishedAt === null || it.publishedAt.getTime() >= cutoff)
       .sort((a, b) => (b.publishedAt?.getTime() ?? 0) - (a.publishedAt?.getTime() ?? 0))
       .slice(0, maxPerOutlet),
+  );
+
+  return capped.sort(
+    (a, b) => (b.publishedAt?.getTime() ?? 0) - (a.publishedAt?.getTime() ?? 0),
+  );
+}
+
+/** Recent op-ed/opinion items across OPINION_FEEDS (same shape as news items). */
+export async function fetchOpinionItems(
+  windowHours = 48,
+  maxPerFeed = 30,
+): Promise<FeedItem[]> {
+  const cutoff = Date.now() - windowHours * 60 * 60 * 1000;
+  const perFeed = await Promise.all(OPINION_FEEDS.map(fetchOutlet));
+
+  const capped = perFeed.flatMap((items) =>
+    items
+      .filter((it) => it.publishedAt === null || it.publishedAt.getTime() >= cutoff)
+      .sort((a, b) => (b.publishedAt?.getTime() ?? 0) - (a.publishedAt?.getTime() ?? 0))
+      .slice(0, maxPerFeed),
   );
 
   return capped.sort(

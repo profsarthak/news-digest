@@ -1,6 +1,7 @@
 import type { Digest } from "@/lib/types";
 import { TopicCard } from "./TopicCard";
 import { DatePicker } from "./DatePicker";
+import { SectionTabs } from "./SectionTabs";
 
 type Props = {
   digest: Digest;
@@ -20,6 +21,8 @@ export function TodayView({ digest, dates }: Props) {
         </div>
         <DatePicker current={digest.date} dates={dates} />
       </header>
+
+      <SectionTabs date={digest.date} active="news" />
 
       <p className="mb-6 text-[15px] text-neutral-500 dark:text-neutral-400">
         ☕ {count} {count === 1 ? "topic" : "topics"} this morning
