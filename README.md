@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NewsDigest
 
-## Getting Started
+A personal, AI-compiled morning news digest. A nightly job clusters stories from RSS feeds,
+uses Claude to research and summarise the day's top topics (plus opinion/op-eds), and serves
+the result as a fast, installable reader PWA.
 
-First, run the development server:
+## How it works
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+RSS feeds ──▶ cluster topics ──▶ Claude research + summarise ──▶ Neon Postgres ──▶ Next.js PWA
+            (nightly GitHub Actions job)                                         (Vercel)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- A **GitHub Actions** cron job (`05:00 IST` / `23:30 UTC`) runs the compile pipeline,
+  writes the finished digest to **Neon Postgres**, and exits. It runs in Actions rather than
+  on Vercel because the compile (web search + summarisation) takes ~2 min — longer than
+  serverless function limits.
+- A **Next.js** app on Vercel (Hobby) reads from Neon and serves a date-addressable reader
+  with topic detail, an opinion section, and a glossary. It's a PWA (service worker +
+  manifest), so it installs to a phone home screen.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tech stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Next.js 16** (App Router) + **React 19**, **Tailwind CSS v4**
+- **@anthropic-ai/sdk** — Claude for research, clustering, and summarisation
+- **@neondatabase/serverless** — serverless Postgres (tables auto-created on first write)
+- **rss-parser** + **@extractus/article-extractor** — ingestion and full-text extraction
+- **zod** — schema validation
+- **tsx** — running the TypeScript compile/probe scripts
 
-## Learn More
+## Project layout
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/                Next.js routes — reader (/[date]), topic & opinion pages, API routes
+components/         UI: TodayView, TopicCard/Detail, OpEdCard, DatePicker, glossary, tabs
+lib/                Pipeline + data layer — feeds, scrape, cluster, research, compile,
+                    opeds, anthropic, db/storage/store, format, types
+scripts/            Compile runner and feed/source probes (run with tsx)
+.github/workflows/  daily-digest.yml — the nightly compile cron
+DEPLOY.md           Full deployment walkthrough (Neon, secrets, Vercel)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Local development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm install
+npm run dev      # http://localhost:3000
+```
 
-## Deploy on Vercel
+Set the required environment variables (see `DEPLOY.md`):
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Variable | Purpose |
+|----------|---------|
+| `ANTHROPIC_API_KEY` | Calls Claude during compile/research |
+| `DATABASE_URL` | Neon pooled connection string |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Optional overrides (`DIGEST_MODEL`, `RESEARCH_MODEL`, `TOP_RESEARCHED`) have defaults in code.
+
+Compile a digest manually:
+
+```bash
+npx tsx scripts/run-compile.ts        # needs ANTHROPIC_API_KEY + DATABASE_URL
+```
+
+## Deployment
+
+See **[DEPLOY.md](DEPLOY.md)** for the full walkthrough: creating the Neon database, setting
+the GitHub Actions secrets, and deploying the reader to Vercel. The nightly job can also be
+triggered manually from the Actions tab or with `gh workflow run`.
