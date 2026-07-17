@@ -28,4 +28,6 @@ jobs:
           # Optional overrides (defaults live in code):
           DIGEST_MODEL: ${{ vars.DIGEST_MODEL }}
           RESEARCH_MODEL: ${{ vars.RESEARCH_MODEL }}
+          OPED_MODEL: ${{ vars.OPED_MODEL }}
           TOP_RESEARCHED: ${{ vars.TOP_RESEARCHED }}
+          OPED_COUNT: ${{ vars.OPED_COUNT }}
