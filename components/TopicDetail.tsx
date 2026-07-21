@@ -8,43 +8,44 @@ type Props = {
   digest: Digest;
 };
 
+const EYEBROW =
+  "font-mono text-[11px] font-normal uppercase leading-none tracking-[0.14em] text-ink-500";
+
 function WebSearchTag() {
   return (
-    <span className="ml-2 rounded-full bg-black/5 px-2 py-0.5 align-middle text-[11px] font-medium normal-case tracking-normal text-accent dark:bg-white/10 dark:text-neutral-300">
-      web-search-backed
+    <span className="ml-2 inline-flex items-center border-[1.5px] border-muted-fg px-[7px] py-[4px] font-mono text-[10px] uppercase leading-none tracking-[0.06em] text-muted-fg">
+      web-searched
     </span>
   );
 }
 
-// Full reading view for one topic: explainer with inline glossary popovers,
-// context, implications, sources, and a glossary list.
+// Full reading view for one topic: display headline, body prose with inline
+// glossary popovers, context, implications (sage warm surface), sources.
 export function TopicDetail({ topic, digest }: Props) {
   return (
     <main className="mx-auto w-full max-w-2xl px-4 pb-20 pt-6 sm:pt-10">
-      <div className="mb-5 flex items-center justify-between text-sm">
+      <div className="mb-6 flex items-center justify-between">
         <Link
           href={`/${digest.date}`}
-          className="font-medium text-accent hover:text-accent-strong hover:underline"
+          className="font-mono text-[11px] uppercase leading-none tracking-[0.06em] text-orange-600 hover:text-orange-700 hover:underline"
         >
-          &lsaquo; Back
+          &larr; Back
         </Link>
-        <span className="text-neutral-500 dark:text-neutral-400">
-          {formatDate(digest.date)}
-        </span>
+        <span className={EYEBROW}>{formatDate(digest.date)}</span>
       </div>
 
-      <article className="font-serif text-[17px] leading-relaxed text-neutral-800 dark:text-neutral-200">
-        <h1 className="mb-5 font-mono text-2xl font-bold leading-tight tracking-tight text-foreground">
+      <article className="font-body text-[17px] leading-[1.7] text-ink-700">
+        <h1 className="mb-6 font-display text-4xl font-bold leading-[0.98] tracking-[-0.045em] text-ink-900">
           {topic.title}
         </h1>
 
-        <p className="mb-6">
+        <p className="mb-8">
           <GlossaryText text={topic.explainer} glossary={topic.glossary} />
         </p>
 
         {topic.context.trim() && (
-          <details open className="mb-6 border-t border-black/10 pt-4 dark:border-white/10">
-            <summary className="cursor-pointer list-none font-sans text-sm font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+          <details open className="mb-8 border-t border-hair pt-4">
+            <summary className={`cursor-pointer list-none ${EYEBROW}`}>
               Context {topic.researched && <WebSearchTag />}
             </summary>
             <p className="mt-3">
@@ -54,8 +55,8 @@ export function TopicDetail({ topic, digest }: Props) {
         )}
 
         {topic.implications.trim() && (
-          <section className="mb-6 rounded-xl border border-honey/25 bg-honey-soft/50 p-4 dark:bg-amber-500/5">
-            <h2 className="mb-2 font-sans text-sm font-semibold uppercase tracking-wide text-honey-strong dark:text-amber-300">
+          <section className="mb-8 border-[1.5px] border-ink-900 bg-sage p-5 shadow-card">
+            <h2 className={`mb-3 ${EYEBROW} text-ink-700`}>
               Implications {topic.researched && <WebSearchTag />}
             </h2>
             <p>
@@ -64,26 +65,22 @@ export function TopicDetail({ topic, digest }: Props) {
           </section>
         )}
 
-        <section className="mb-6">
-          <h2 className="mb-2 font-sans text-sm font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-            📰 Sources
-          </h2>
-          <ul className="space-y-1.5">
+        <section className="mb-8 border-t border-hair pt-4">
+          <h2 className={`mb-3 ${EYEBROW}`}>Sources</h2>
+          <ul className="space-y-2">
             {topic.sources.map((s) => (
               <li key={s.url}>
                 <a
                   href={s.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[15px] text-foreground hover:text-accent-strong hover:underline"
+                  className="group block text-[15px] leading-snug"
                 >
-                  <span className="font-medium">{s.outlet}</span>
-                  <span className="text-neutral-500 dark:text-neutral-400">
-                    {" "}
-                    — {s.headline}
+                  <span className="font-mono text-[11px] uppercase tracking-[0.06em] text-ink-900">
+                    {s.outlet}
                   </span>
-                  <span aria-hidden className="ml-1 text-neutral-400">
-                    &#8599;
+                  <span className="ml-2 text-ink-600 group-hover:text-orange-600 group-hover:underline">
+                    {s.headline} &#8599;
                   </span>
                 </a>
               </li>
@@ -92,15 +89,15 @@ export function TopicDetail({ topic, digest }: Props) {
         </section>
 
         {topic.glossary.length > 0 && (
-          <section className="border-t border-black/10 pt-4 dark:border-white/10">
-            <h2 className="mb-3 font-sans text-sm font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-              🏷 Glossary
-            </h2>
+          <section className="border-t border-hair pt-4">
+            <h2 className={`mb-3 ${EYEBROW}`}>Glossary</h2>
             <dl className="space-y-3">
               {topic.glossary.map((g) => (
                 <div key={g.term}>
-                  <dt className="font-semibold text-foreground">{g.term}</dt>
-                  <dd className="text-[15px] text-neutral-600 dark:text-neutral-300">
+                  <dt className="font-display text-[17px] font-semibold tracking-[-0.02em] text-ink-900">
+                    {g.term}
+                  </dt>
+                  <dd className="text-[15px] leading-relaxed text-ink-600">
                     {g.definition}
                   </dd>
                 </div>

@@ -166,11 +166,22 @@ The digest is keyed to the **Indian** calendar day. To change:
 
 ### Look & feel
 
-- **Theme colors** (the warm "paper" light theme + honey accent): CSS variables at the top of
-  [`app/globals.css`](./app/globals.css).
-- **Fonts** (mono headlines, Roboto body): [`app/layout.tsx`](./app/layout.tsx).
-- **PWA name/icons:** [`app/manifest.ts`](./app/manifest.ts); regenerate icons with
+The UI uses my personal design system — a brutalist treatment: **square corners**, **1.5px ink
+borders**, **hard offset shadows** (`5px 5px 0`, no blur), warm bone/paper surfaces, and a single hot
+orange accent used as "the signal". Type is **Space Grotesk** (display), **IBM Plex Sans** (body),
+**Space Mono** (labels/metadata).
+
+Swapping in your own brand is a two-file job:
+
+- **Tokens** — colors, fonts, and shadows are all CSS variables + a Tailwind `@theme` block at the
+  top of [`app/globals.css`](./app/globals.css). Change the hex values and every component follows.
+- **Fonts** — [`app/layout.tsx`](./app/layout.tsx) loads the three faces via `next/font/google`;
+  swap the imports and the `--font-*` variables.
+- **PWA name/icons** — [`app/manifest.ts`](./app/manifest.ts); regenerate icons with
   `node --import tsx scripts/make-icons.ts` after editing the SVG in that script.
+
+Want the soft, rounded look instead? Drop the `shadow-card` / `border-[1.5px]` classes in
+`components/` and add `rounded-2xl` — nothing else depends on the shape treatment.
 
 ---
 

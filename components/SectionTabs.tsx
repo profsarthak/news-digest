@@ -5,19 +5,24 @@ type Props = {
   active: "news" | "opinion";
 };
 
-// Segmented News / Opinion toggle, shared by the Today view and Opinion page.
+// Square segmented News / Opinion toggle — solid ink marks the active section.
 export function SectionTabs({ date, active }: Props) {
-  const pill = "rounded-full px-3.5 py-1 text-sm font-medium transition";
-  const on = "bg-white text-foreground shadow-sm dark:bg-neutral-700";
-  const off = "text-neutral-500 hover:text-foreground";
+  const base =
+    "px-4 py-2 font-mono text-[11px] uppercase leading-none tracking-[0.06em] transition";
+  const on = "bg-ink-900 text-paper";
+  const off = "text-ink-700 hover:bg-bone-dk";
+
   return (
-    <nav className="mb-6 inline-flex gap-1 rounded-full bg-black/5 p-0.5 dark:bg-white/10">
-      <Link href={`/${date}`} className={`${pill} ${active === "news" ? on : off}`}>
+    <nav className="mb-6 inline-flex border-[1.5px] border-ink-900">
+      <Link
+        href={`/${date}`}
+        className={`${base} ${active === "news" ? on : off} border-r-[1.5px] border-ink-900`}
+      >
         News
       </Link>
       <Link
         href={`/${date}/opinion`}
-        className={`${pill} ${active === "opinion" ? on : off}`}
+        className={`${base} ${active === "opinion" ? on : off}`}
       >
         Opinion
       </Link>

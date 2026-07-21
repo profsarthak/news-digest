@@ -35,17 +35,19 @@ export function GlossaryTerm({ term, definition }: Props) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="cursor-pointer underline decoration-dotted decoration-honey/70 underline-offset-4 font-medium text-honey hover:decoration-honey"
+        className="cursor-pointer underline decoration-dotted decoration-orange-500/70 underline-offset-4 font-medium text-orange-700 hover:decoration-orange-500"
       >
         {term}
-        <span className="ml-0.5 align-super text-[0.6em] text-honey">&#9432;</span>
+        <span className="ml-0.5 align-super text-[0.6em] text-orange-500">&#9432;</span>
       </button>
       {open && (
         <span
           role="tooltip"
-          className="absolute left-0 top-full z-20 mt-1 block w-64 rounded-lg border border-black/10 bg-white p-3 text-sm leading-snug text-neutral-700 shadow-lg dark:border-white/15 dark:bg-neutral-900 dark:text-neutral-200"
+          className="absolute left-0 top-full z-20 mt-1 block w-64 border-[1.5px] border-ink-900 bg-paper p-3 font-body text-sm leading-snug text-ink-700 shadow-card"
         >
-          <span className="mb-1 block font-semibold text-foreground">{term}</span>
+          <span className="mb-1 block font-mono text-[11px] uppercase tracking-[0.06em] text-ink-900">
+            {term}
+          </span>
           {definition}
         </span>
       )}

@@ -20,7 +20,7 @@ export function DatePicker({ current, dates, section = "news" }: Props) {
         aria-label="Select date"
         value={current}
         onChange={(e) => router.push(hrefFor(e.target.value))}
-        className="cursor-pointer appearance-none rounded-lg border border-black/10 bg-white py-1.5 pl-3 pr-8 text-sm font-medium text-foreground shadow-sm dark:border-white/15 dark:bg-neutral-900"
+        className="cursor-pointer appearance-none border-[1.5px] border-ink-900 bg-paper py-2 pl-3 pr-8 font-mono text-[11px] uppercase leading-none tracking-[0.06em] text-ink-900"
       >
         {dates.map((d) => (
           <option key={d} value={d}>
@@ -30,7 +30,7 @@ export function DatePicker({ current, dates, section = "news" }: Props) {
       </select>
       <span
         aria-hidden
-        className="pointer-events-none absolute right-2.5 text-neutral-400"
+        className="pointer-events-none absolute right-2.5 text-ink-500"
       >
         &#9662;
       </span>

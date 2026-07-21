@@ -1,47 +1,111 @@
 @import "tailwindcss";
 
-/* Dark mode is opt-in via a `.dark` class (never auto from the OS), so the
-   warm "paper" light theme is the consistent default. */
+/* Dark mode stays opt-in via a `.dark` class (never auto from the OS), so the
+   brand's warm paper surfaces are the consistent default. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ---------------------------------------------------------------------------
+   Sarthak Vedant — personal brand tokens
+   Ported from the `personal-brand` design system (tokens/{colors,typography,
+   spacing,effects}.css). Brutalist: square corners, 1.5px ink borders, hard
+   offset shadows (no blur), warm bone/paper surfaces, one hot orange accent.
+   --------------------------------------------------------------------------- */
 :root {
   color-scheme: light;
 
-  /* Warm "paper" background for comfortable morning reading. */
-  --background: #faf8f4;
-  --foreground: #211e1a;
+  /* Ink */
+  --ink-950: #0d0d0b;
+  --ink-900: #161613;
+  --ink-800: #1c1c18;
+  --ink-700: #3a3a33;
+  --ink-600: #4e4e45;
+  --ink-500: #5e5e54;
 
-  /* Structural / interactive accent: warm dark gray. */
-  --accent: #44403c;
-  --accent-strong: #292524;
+  /* Warm neutrals */
+  --paper: #f4f3ec;
+  --bone: #edece3;
+  --bone-dk: #dcdccf;
+  --sage: #dfe2d0;
+  --sage-dk: #c9cabf;
+  --hair: #b7b6a8;
 
-  /* Emphasis: honey amber (used sparingly for highlighted text). */
-  --honey: #9a6a24;
-  --honey-strong: #7a521b;
-  --honey-soft: #f2e7d2;
+  /* The one accent — orange is the signal */
+  --orange-700: #b53c12;
+  --orange-600: #cf4718;
+  --orange-500: #e8531d;
+  --orange-400: #f0764a;
+  --orange-200: #f2b48a;
+  --orange-100: #fbe0d3;
+
+  /* Null / muted (brand: --null-fg / --null-bg) */
+  --muted-fg: #8a8a7e;
+  --muted-bg: #e4e3d8;
+
+  /* Page defaults */
+  --background: var(--bone);
+  --foreground: var(--ink-900);
+
+  /* Effects */
+  --bw: 1.5px;
+  --ease-standard: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --dur: 170ms;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  --color-accent: var(--accent);
-  --color-accent-strong: var(--accent-strong);
+  --color-ink-950: var(--ink-950);
+  --color-ink-900: var(--ink-900);
+  --color-ink-800: var(--ink-800);
+  --color-ink-700: var(--ink-700);
+  --color-ink-600: var(--ink-600);
+  --color-ink-500: var(--ink-500);
 
-  --color-honey: var(--honey);
-  --color-honey-strong: var(--honey-strong);
-  --color-honey-soft: var(--honey-soft);
+  --color-paper: var(--paper);
+  --color-bone: var(--bone);
+  --color-bone-dk: var(--bone-dk);
+  --color-sage: var(--sage);
+  --color-sage-dk: var(--sage-dk);
+  --color-hair: var(--hair);
 
-  --font-sans: var(--font-geist-sans);
-  /* Headlines use a monospace face. */
-  --font-mono: var(--font-geist-mono);
-  /* Body/reading text: Roboto with a Georgia fallback. */
-  --font-serif: var(--font-roboto), Georgia, serif;
+  --color-orange-700: var(--orange-700);
+  --color-orange-600: var(--orange-600);
+  --color-orange-500: var(--orange-500);
+  --color-orange-400: var(--orange-400);
+  --color-orange-200: var(--orange-200);
+  --color-orange-100: var(--orange-100);
+
+  --color-muted-fg: var(--muted-fg);
+  --color-muted-bg: var(--muted-bg);
+
+  /* Type: display headlines, body reading, mono chrome */
+  --font-display: var(--font-space-grotesk), "Arial Narrow", system-ui, sans-serif;
+  --font-body: var(--font-ibm-plex-sans), "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), ui-monospace, monospace;
+  --font-sans: var(--font-ibm-plex-sans), "Segoe UI", system-ui, sans-serif;
+
+  /* Hard offset shadows — no blur, ever */
+  --shadow-xs: 2px 2px 0 var(--ink-900);
+  --shadow-sm: 3px 3px 0 var(--ink-900);
+  --shadow-card: 5px 5px 0 var(--ink-900);
+  --shadow-lg: 8px 8px 0 var(--ink-900);
+  --shadow-accent: 5px 5px 0 var(--orange-500);
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  color: var(--ink-700);
+  font-family: var(--font-ibm-plex-sans), "Segoe UI", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--orange-500);
+  color: #fff;
+}
+
+/* Square by default — the brand has no rounded corners. */
+* {
+  border-radius: 0;
 }

@@ -5,27 +5,28 @@ type Props = {
   oped: OpEd;
 };
 
-// One op-ed on the Opinion tab: title, byline, a highlighted thesis line, a
-// neutral summary with inline glossary popovers, and a read-it link.
+// One op-ed: brand Card surface, display headline, mono byline, and the thesis
+// carried in orange — the accent is the signal.
 export function OpEdCard({ oped }: Props) {
-  const byline = oped.author
-    ? `by ${oped.author} · ${oped.outlet}`
-    : oped.outlet;
+  const byline = oped.author ? `${oped.author} · ${oped.outlet}` : oped.outlet;
 
   return (
-    <article className="rounded-2xl border border-black/10 bg-white/70 p-5 shadow-sm dark:border-white/10 dark:bg-neutral-900">
-      <h2 className="font-mono text-base font-semibold leading-snug tracking-tight text-foreground">
+    <article className="border-[1.5px] border-ink-900 bg-paper p-5 shadow-card">
+      <h2 className="font-display text-xl font-bold leading-[1.08] tracking-[-0.03em] text-ink-900">
         {oped.title}
       </h2>
-      <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{byline}</p>
+
+      <p className="mt-2 font-mono text-[11px] uppercase leading-none tracking-[0.06em] text-ink-500">
+        {byline}
+      </p>
 
       {oped.thesis.trim() && (
-        <p className="mt-3 border-l-2 border-honey/50 pl-3 font-serif italic text-honey-strong dark:text-amber-300">
+        <p className="mt-4 border-l-[3px] border-orange-500 pl-3 font-body text-[15px] italic leading-relaxed text-orange-700">
           {oped.thesis}
         </p>
       )}
 
-      <p className="mt-3 font-serif text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300">
+      <p className="mt-4 font-body text-[15px] leading-relaxed text-ink-700">
         <GlossaryText text={oped.summary} glossary={oped.glossary} />
       </p>
 
@@ -33,7 +34,7 @@ export function OpEdCard({ oped }: Props) {
         href={oped.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-4 inline-block text-sm font-medium text-honey hover:underline"
+        className="mt-5 inline-block font-mono text-[11px] uppercase leading-none tracking-[0.06em] text-orange-600 hover:text-orange-700 hover:underline"
       >
         Read the op-ed &#8599;
       </a>

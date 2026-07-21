@@ -19,25 +19,25 @@ export default async function OpinionPage({
 
   return (
     <main className="mx-auto w-full max-w-2xl px-4 pb-16 pt-6 sm:pt-10">
-      <header className="mb-6 flex items-center justify-between">
-        <h1 className="text-xl font-bold tracking-tight text-foreground">
-          News<span className="text-honey">Digest</span>
+      <header className="mb-6 flex items-center justify-between gap-3">
+        <h1 className="font-display text-2xl font-bold tracking-[-0.045em] text-ink-900">
+          News<span className="text-orange-600">Digest</span>
         </h1>
         <DatePicker current={digest.date} dates={dates} section="opinion" />
       </header>
 
       <SectionTabs date={digest.date} active="opinion" />
 
-      <p className="mb-6 text-[15px] text-neutral-500 dark:text-neutral-400">
-        🖊 {opeds.length} {opeds.length === 1 ? "op-ed" : "op-eds"} today
+      <p className="mb-6 font-mono text-[11px] uppercase leading-none tracking-[0.14em] text-ink-500">
+        {opeds.length} {opeds.length === 1 ? "op-ed" : "op-eds"} today
       </p>
 
       {opeds.length === 0 ? (
-        <p className="text-neutral-500 dark:text-neutral-400">
+        <p className="font-body text-[15px] text-ink-500">
           No op-eds compiled for this day.
         </p>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {opeds.map((o) => (
             <OpEdCard key={o.id} oped={o} />
           ))}

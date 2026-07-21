@@ -6,36 +6,35 @@ type Props = {
   date: string;
 };
 
-// A single topic preview on the Today view. Tapping anywhere opens the detail.
+// A single topic preview. Brand Card: paper surface, square, 1.5px ink border,
+// hard offset shadow; hover shifts the card into a deeper shadow.
 export function TopicCard({ topic, date }: Props) {
   // Distinct outlet names (a topic often has several articles from one outlet).
   const outlets = [...new Set(topic.sources.map((s) => s.outlet))];
+
   return (
     <Link
       href={`/${date}/${topic.id}`}
-      className="group block rounded-2xl border border-black/10 bg-white/70 p-5 shadow-sm transition hover:border-accent/30 hover:shadow-md dark:border-white/10 dark:bg-neutral-900"
+      className="group block border-[1.5px] border-ink-900 bg-paper p-5 shadow-card transition duration-150 ease-out hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-lg"
     >
-      <h2 className="font-mono text-base font-semibold leading-snug tracking-tight text-foreground transition group-hover:text-accent-strong">
+      <h2 className="font-display text-xl font-bold leading-[1.08] tracking-[-0.03em] text-ink-900">
         {topic.title}
       </h2>
-      <p className="mt-2 line-clamp-3 font-serif text-[15px] leading-relaxed text-neutral-600 dark:text-neutral-300">
+
+      <p className="mt-3 line-clamp-3 font-body text-[15px] leading-relaxed text-ink-700">
         {topic.explainer}
       </p>
 
-      <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-neutral-500 dark:text-neutral-400">
-        <span aria-hidden>📰</span>
-        <span>{outlets.join(" · ")}</span>
-      </div>
+      <p className="mt-4 font-mono text-[11px] uppercase leading-none tracking-[0.06em] text-ink-500">
+        {outlets.join(" · ")}
+      </p>
 
       {topic.glossary.length > 0 && (
-        <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
-          <span aria-hidden className="text-neutral-400">
-            🏷
-          </span>
+        <div className="mt-3 flex flex-wrap gap-1.5">
           {topic.glossary.slice(0, 4).map((g) => (
             <span
               key={g.term}
-              className="rounded-full bg-honey-soft px-2 py-0.5 text-honey-strong dark:bg-amber-500/10 dark:text-amber-300"
+              className="inline-flex items-center border-[1.5px] border-ink-900 px-[9px] py-[5px] font-mono text-[11px] uppercase leading-none tracking-[0.06em] text-ink-700"
             >
               {g.term}
             </span>
@@ -43,8 +42,8 @@ export function TopicCard({ topic, date }: Props) {
         </div>
       )}
 
-      <div className="mt-3 text-sm font-medium text-honey">
-        Read &middot; context &amp; implications &rarr;
+      <div className="mt-4 font-mono text-[11px] uppercase leading-none tracking-[0.06em] text-orange-600">
+        Read &rarr;
       </div>
     </Link>
   );
