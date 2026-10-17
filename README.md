@@ -6,6 +6,9 @@ for each topic writes a plain-English explainer, a jargon glossary, and (for the
 web-search-backed context and implications. It also curates a few **op-eds** on a separate Opinion
 tab. You open it with coffee and read.
 
+🔗 **Live demo: [news-digest-theta.vercel.app](https://news-digest-theta.vercel.app/)** — the reader, with daily digests archived
+through 30 July 2026 (the daily compile is paused for now; see [Pausing](#pausing--stopping-spend)).
+
 Built with Next.js + Claude. It's a personal project, but it's designed to be **forked and made your
 own** — different countries, outlets, languages, models, and budgets. This README is the guide for
 doing that.
