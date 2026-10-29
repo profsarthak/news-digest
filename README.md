@@ -180,6 +180,8 @@ Swapping in your own brand is a two-file job:
   top of [`app/globals.css`](./app/globals.css). Change the hex values and every component follows.
 - **Fonts** — [`app/layout.tsx`](./app/layout.tsx) loads the three faces via `next/font/google`;
   swap the imports and the `--font-*` variables.
+- **Share card** — [`app/opengraph-image.png`](./app/opengraph-image.png) (1200×630) is the link-preview
+  image, with its alt text in `app/opengraph-image.alt.txt`; replace both with your own.
 - **PWA name/icons** — [`app/manifest.ts`](./app/manifest.ts); regenerate icons with
   `node --import tsx scripts/make-icons.ts` after editing the SVG in that script.
 

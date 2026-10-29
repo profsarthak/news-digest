@@ -25,6 +25,13 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "NewsDigest",
   description: "Your daily news, compiled and explained.",
+  // The share image is app/opengraph-image.png (file convention). On Vercel its
+  // URL resolves against the production domain, so no metadataBase is needed.
+  openGraph: {
+    type: "website",
+    title: "News Digest",
+    description: "Your daily news, compiled and explained.",
+  },
   appleWebApp: { capable: true, title: "NewsDigest", statusBarStyle: "default" },
   icons: { apple: "/apple-icon.png" },
 };
